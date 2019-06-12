@@ -1,0 +1,9 @@
+* {
+  margin: auto;
+}
+#screengame {
+  background-image: url(/images-jeu/background.jpg);
+  width: 100%;
+  background-position: center;
+  background-size: cover;
+}
