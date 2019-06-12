@@ -17,11 +17,15 @@ var config = {
   }
 };
 var game = new Phaser.Game(config);
-console.log(game);
-const collider = new Phaser.Physics.Arcade.Collider(true, function test() {});
-console.log("collider", collider);
+const collider = new Phaser.Physics.Arcade.Collider(
+  true,
+  function collision() {}
+);
 let cursors;
-
+var fish;
+var trashs;
+var timeNow;
+var timeBefore = Date.now();
 // window.onresize = rescale;
 
 // function rescale() {
@@ -32,50 +36,44 @@ let cursors;
 function preload() {
   this.load.image("background", "images-jeu/background.jpg");
   this.load.image("fish", "./images-jeu/main-character.png");
-  this.load.image("trash", "images-jeu/trash/42567oildrum_98985.png");
+  this.load.image("trash1", "images-jeu/trash/42567oildrum_98985.png");
   this.load.image(
-    "trash1",
+    "trash2",
     "images-jeu/trash/Beer_Can_icon-icons.com_68781.png"
   );
-  this.load.image("trash2", "images-jeu/trash/coffecuptotakeaway_122701.png");
-  this.load.image("trash3", "images-jeu/trash/drinkpackage_122723.png");
+  this.load.image("trash3", "images-jeu/trash/coffecuptotakeaway_122701.png");
+  this.load.image("trash4", "images-jeu/trash/drinkpackage_122723.png");
 }
 
 function create() {
   this.add.image(1300, 1200, "background");
-  fish = this.physics.add.image(100, 200, "fish");
-  // bounds
-
-  console.log("this", this);
-  const trashs = ["trash2", "trash3", "trash", "trash"];
-
-  setInterval(() => {
-    let position = Math.floor(Math.random() * 2900);
-    const randomIndex = Math.floor(Math.random() * Math.floor(trashs.length));
-    random = this.physics.add.image(position, 0, trashs[randomIndex]);
-    random.body.collideWorldBounds = true;
-    random.body.setBounce(0.1);
-  }, 7000);
-
-  //   trashs.body.checkCollision.up = true;
-  //   trashs.body.checkCollision.down = true;
-  //   trashs.body.checkCollision.left = true;
-  //   trashs.body.checkCollision.right = true;
-
-  fish.body.collideWorldBounds = true;
-  fish.body.checkCollision.up = true;
-  fish.body.checkCollision.down = true;
-  fish.body.checkCollision.left = true;
-  fish.body.checkCollision.right = true;
+  trashs = ["trash1", "trash2", "trash3", "trash4"];
+  fish = this.physics.add.group({
+    key: "fish",
+    collideWorldBounds: true
+  });
 
   cursors = this.input.keyboard.createCursorKeys();
-
-  this.physics.add.collider(trashs, function(trash) {
-    console.log("yay win !!!!", trash);
-  });
 }
 
 function update() {
+  const trashs = ["trash1", "trash2", "trash3", "trash4"];
+
+  timeNow = Date.now();
+  if (timeNow - timeBefore >= 100000) {
+    const randomIndex = Math.floor(Math.random() * Math.floor(trashs.length));
+    let position = Math.floor(Math.random() * 2900);
+    let seaTrashs = this.physics.add.group({
+      key: trashs[randomIndex],
+      setXY: { x: position, y: 0 },
+      bounceX: 0.1,
+      bounceY: 0.2,
+      collideWorldBounds: true
+    });
+
+    this.physics.add.collider(fish, seaTrashs);
+    timeBefore = timeNow;
+  }
   fish.setVelocityX(50, 50);
   if (cursors.up.isDown) {
     fish.setVelocity(0, -1000);
@@ -89,10 +87,5 @@ function update() {
   if (cursors.down.isDown) {
     fish.setVelocity(0, 1000);
   }
-  //   game.physics.arcade.collide(fish, randomTrashs);
+  //console.log(game);
 }
-
-// function addTrash() {
-//   var trash = this.add.image(400, 100, "trash");
-//   this.trashs.add("trash");
-// }
