@@ -97,7 +97,7 @@ function update() {
   const trashs = ["trash1", "trash2", "trash3", "trash4"];
 
   timeNow = Date.now();
-  if (timeNow - timeBefore >= 1000000) {
+  if (timeNow - timeBefore >= 1000) {
     const randomIndex = Math.floor(Math.random() * Math.floor(trashs.length));
     let position = Math.floor(Math.random() * 2900);
     let seaTrashs = this.physics.add.group({
